@@ -73,3 +73,57 @@ def mostrar_ordem(o):
     print(f"   Entrega prevista: {entrega} | Pagamento: {o.pagamento.status()}")
 
 #proximo é passo é cadastro e login
+
+# Cadastro e Login 
+
+def cadastrar_usuario():
+    falar("CADASTRO DE USUARIO")
+    i = escolher("Qual a sua funcao?", ["Dentista", "Protetico"])
+    if i == 0:
+        classe_est, classe_usu, tipo_est = Clinica, Dentista, "clinica"
+    else:
+        classe_est, classe_usu, tipo_est = Laboratorio, Protetico, "laboratorio"
+
+    lista = [e for e in banco.estabelecimentos if isinstance(e, classe_est)]
+    opcoes = [e.nome for e in lista] + ["Cadastrar nova " + tipo_est if i == 0 else "Cadastrar novo " + tipo_est]
+    j = escolher(f"A qual {tipo_est} voce esta vinculado?", opcoes)
+    if j == len(lista):
+        nome_est = perguntar("Nome da " + tipo_est)
+        if nome_est == "":
+            falar("O nome e obrigatorio.")
+            return
+        endereco = perguntar("Endereco")
+        contato = perguntar("Contato")
+        estab = classe_est(nome_est, endereco, contato)
+    else:
+        estab = lista[j]
+
+    nome = perguntar("Seu nome completo")
+    login = perguntar("Escolha um login")
+    senha = perguntar("Escolha uma senha")
+    if nome == "" or login == "" or senha == "":
+        falar("Preencha todos os campos.")
+        return
+    for u in banco.usuarios:
+        if u.login == login:
+            falar("Esse login ja existe.")
+            return
+    if estab not in banco.estabelecimentos:
+        banco.estabelecimentos.append(estab)
+    banco.usuarios.append(classe_usu(nome, login, senha, estab))
+    dados.salvar(banco)
+    falar("Cadastro realizado com sucesso!")
+
+
+def fazer_login():
+    global usuario_logado
+    falar("LOGIN")
+    login = perguntar("Login")
+    senha = perguntar("Senha")
+    for u in banco.usuarios:
+        if u.login == login and u.conferir_senha(senha):
+            usuario_logado = u
+            falar(f"Bem-vindo, {u.nome} ({u.funcao}).")
+            return True
+    falar("Login ou senha incorretos.")
+    return False
