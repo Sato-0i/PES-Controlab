@@ -71,3 +71,5 @@ def mostrar_ordem(o):
     print(f"   Paciente: {o.paciente} (prontuario {o.prontuario}) | Cor: {o.cor} | Dentes: {dentes}")
     print(f"   Produtos: {produtos}")
     print(f"   Entrega prevista: {entrega} | Pagamento: {o.pagamento.status()}")
+
+#proximo é passo é cadastro e login
